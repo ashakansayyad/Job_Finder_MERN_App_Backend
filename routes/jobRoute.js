@@ -165,23 +165,57 @@ router.put("/:id", authMiddleware, async (req, res) => {
   }
 });
 
-// get job by title
+// // get job by title
+// router.get("/search/:title", async (req, res) => {
+//   try {
+//     const { title } = req.params; //Assigns the entire req.params object
+
+//     // Create a regex to search jobs by title (case-insensitive)
+//     // "i" flag makes the regex case-insensitive
+//     const jobs = await Job.find({ name: new RegExp(title, "i") }).select(
+//       "-_id -creator -information"
+//     ); // Exclude certain fields from the result
+//     if (!jobs) {
+//       return res.status(404).json({ message: "Job not found" });
+//     }
+//     res.status(200).json(jobs);
+//   } catch (err) {
+//     return res.status(404).json({ message: "job not found" });
+//   }
+// });
+
+
+// Get job by title
 router.get("/search/:title", async (req, res) => {
   try {
-    const { title } = req.params; //Assigns the entire req.params object
+    const { title } = req.params;
+
+    // Log the search input
+   
+
+    // Validate title is not empty
+    if (!title || title.trim() === "") {
+      return res.status(400).json({ message: "Title parameter is required." });
+    }
 
     // Create a regex to search jobs by title (case-insensitive)
-    // "i" flag makes the regex case-insensitive
-    const jobs = await Job.find({ name: new RegExp(title, "i") }).select(
+    const jobs = await Job.find({ name: new RegExp(title.trim(), "i") }).select(
       "-_id -creator -information"
     ); // Exclude certain fields from the result
-    if (!jobs) {
+
+    // Log the found jobs
+    
+
+    if (jobs.length === 0) {
       return res.status(404).json({ message: "Job not found" });
     }
+
     res.status(200).json(jobs);
   } catch (err) {
-    return res.status(404).json({ message: "job not found" });
+    console.error(err); // Log the error for debugging
+    return res.status(500).json({ message: "An error occurred while searching for jobs." });
   }
 });
+
 
 module.exports = router;

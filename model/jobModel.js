@@ -24,12 +24,12 @@ const jobSchema = new mongoose.Schema({
     jobType : {
         type:String,
         required:true,
-        enum : ["full-time","part-time","contract","internship"]  //only the values in this array can be used for jobType.
+        enum :["Full-Time", "Part-Time", "Contract","Internship"]//only the values in this array can be used for jobType.
     },
     remote:{
-        type:Boolean,
+        type:String,
         required:true,
-        default:false
+        enum : ["Remote","Office"] 
     },
     location:{
         type:String,
