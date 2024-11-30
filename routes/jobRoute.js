@@ -130,7 +130,8 @@ router.put("/:id", authMiddleware, async (req, res) => {
       skills,
       information,
     } = req.body;
-    const skill = skills?.split(",").map((skill) => skill.trim());
+    const skill = Array.isArray(skills) ? skills.map((skill)=>skill.trim()) : [];
+    const parsedSalary = JSON.parse(salary) ;
     let job = await Job.findById(id);
     if (!job) {
       return res.status(404).json({ message: "job not found" });
@@ -147,7 +148,7 @@ router.put("/:id", authMiddleware, async (req, res) => {
         logo,
         cnlogo,
         position,
-        salary,
+        salary:parsedSalary,
         jobType,
         remote,
         location,
@@ -186,10 +187,10 @@ router.put("/:id", authMiddleware, async (req, res) => {
 
 
 // Get job by title
-router.get("/search/:title", async (req, res) => {
+router.post("/search/:title", async (req, res) => {
   try {
     const { title } = req.params;
-
+console.log(title)
     // Log the search input
    
 
@@ -199,12 +200,12 @@ router.get("/search/:title", async (req, res) => {
     }
 
     // Create a regex to search jobs by title (case-insensitive)
-    const jobs = await Job.find({ name: new RegExp(title.trim(), "i") }).select(
+    const jobs = await Job.find({ position : new RegExp(title.trim(), "i") }).select(
       "-_id -creator -information"
     ); // Exclude certain fields from the result
 
     // Log the found jobs
-    
+    console.log(jobs)
 
     if (jobs.length === 0) {
       return res.status(404).json({ message: "Job not found" });
